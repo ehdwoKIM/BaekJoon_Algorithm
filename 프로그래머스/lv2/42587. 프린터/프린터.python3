@@ -1,0 +1,21 @@
+def solution(priorities, location):
+    answer = 0
+    
+    #인쇄 대기열이 남아있으면 반복
+    while len(priorities)!=0:
+        #case1. 대기목록의 맨앞 문서가 가장 중요도 높은 경우
+        if priorities[0]==max(priorities):
+            answer+=1
+            priorities.pop(0) #앞에있는거 먼저 삭제
+            if location==0:
+                return answer
+            else:
+                location-=1
+        #case2. 대기목록의 맨앞 문서가 가장 중요도 높지 않은 경우
+        else:
+            priorities.append(priorities.pop(0))#해당문서를 대기열 맨뒤로 이동
+            if location==0:
+                location=len(priorities)-1
+            else:
+                location-=1
+    return answer
