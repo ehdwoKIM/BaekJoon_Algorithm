@@ -1,35 +1,38 @@
-#백준 집합
+#백준 집합 _ 비트마스킹으로 풀어보자
 import sys
 
 m=int(sys.stdin.readline())
-s=set()
+check = [False for _ in range(21)]
 
 for i in range(m):
-    command=sys.stdin.readline().strip().split()
+    command=list(sys.stdin.readline().rstrip().split())
+    cmd=command[0]
     
-    if len(command)==1:
-        if command[0]=='all':
-            s=set([i for i in range(1, 21)])
-        elif command[0]=='empty':
-            s=set()
-    
-    else:
-        com, x = command[0], command[1]
-        x=int(x)
+    if len(command) == 2:
+        x = int(command[1])
         
-        if com=='add':
-            s.add(x)
-        elif com=='remove':
-            s.discard(x) #remove함수는 존재하지 않는 수를 제거하려고 하면 오류를 발생하는데 discard함수를 사용하면 오류가 나지않고 정상종료
-        elif com=='check':
-            if x in s:
-                print(1)
-            else:
-                print(0)
-        elif com=='toggle':
-            if x in s:
-                s.discard(x)
-            else:
-                s.add(x)
+    if cmd == 'add':
+        if not check[x]:
+            check[x] = True
             
+    elif cmd == 'check':
+        if check[x]:
+            print(1)
+        else:
+            print(0)
+            
+    elif cmd == 'remove':
+        if check[x]:
+            check[x] = False
+            
+    elif cmd == 'toggle':
+        if check[x]:
+            check[x] = False
+        else:
+            check[x] = True
+            
+    elif cmd == 'all':
+        check = [True for _ in range(21)]
+    elif cmd == 'empty':
+        check = [False for _ in range(21)]
     
