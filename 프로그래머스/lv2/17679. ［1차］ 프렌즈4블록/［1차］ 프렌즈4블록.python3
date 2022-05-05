@@ -1,0 +1,37 @@
+def solution(m, n, board):
+    answer = 0
+    for i in range(len(board)):
+        board[i] = list(board[i])#입력받은 board 줄별로 list형식으로 변환
+        
+    while True:
+        #제거한부분 확인 위해 remove배열 선언, ㅓ초기화
+        remove = [[0] * n for _ in range(m)]
+        
+        for i in range(m-1):
+            for j in range(n-1):
+                #2x2에 해당하는 인덱스 모두 제거
+                if board[i][j] != 0 and board[i][j] == board[i][j+1] and board[i][j] == board[i+1][j] and board[i][j] == board[i+1][j+1]:
+                    #remove 배열의 해당 인덱스는 모두1로 설정
+                    remove[i][j], remove[i][j+1], remove[i+1][j], remove[i+1][j+1] = 1, 1, 1, 1
+                    
+        #줄별로 remove[i]=1인 경우 sum, 제거한 블록 answer에 더한다            
+        count = 0
+        for i in range(m):
+            count += sum(remove[i])
+        answer += count
+        
+        #제거한 블록 위치에 블록 채우기
+        if count == 0:
+            break
+        for i in range(m-1, -1, -1):
+            for j in range(n):
+                if remove[i][j] == 1:
+                    x = i-1
+                    while x >= 0 and remove[x][j] == 1:
+                        x -= 1
+                    if x < 0:
+                        board[i][j] = 0
+                    else:
+                        board[i][j] = board[x][j]
+                        remove[x][j] = 1
+    return answer
