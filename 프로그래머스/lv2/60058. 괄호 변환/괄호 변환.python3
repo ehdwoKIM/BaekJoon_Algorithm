@@ -1,0 +1,56 @@
+def recursive(v):
+    cnt1 =0
+    cnt2 =0
+    u = []
+    v= list(v)
+    # 처음 균형잡힌 문자열이 되는 순간을 기점으로 끊는다. 
+    for i in range(len(v)):
+        if v[i] =="(":
+            cnt1 += 1
+        else:
+            cnt2 += 1
+        if cnt1 == cnt2:
+            u = v[:i+1] # 균형잡힌 괄호 문자열로 분리
+            v = v[i+1:]
+            break
+    # u 가 올바른지 아닌지를 판단
+    check =False 
+    cnt = 0
+    for i in u:
+        if i == "(":
+            cnt += 1
+        elif i == ")":
+            cnt -= 1
+            
+        if cnt < 0:
+            break
+            check= False
+        else: 
+            check= True
+    # u가 올바른 문자열이 아닐때 변환
+    if check == False:  
+        u = u[1:-1]
+        for i in range(len(u)):
+            if u[i] == "(":
+                u[i] =")"
+            elif u[i] == ")":
+                u[i] = "("
+    # u 가 올바르면 그냥 pass
+    
+    # 이전에 올바랐는지 아닌지에 따라 리턴값이 달라진다.
+    if check == False:
+        # v에 아무것도 들어있지 않으면 연산을 종료
+        if v ==[]:
+            return ["(",")"]+u
+        return ["("]+recursive(v)+[")"]+u
+    
+    if check == True:
+        # v에 아무것도 들어있지 않으면 연산을 종료
+        if v ==[]:
+            return u
+        return u + recursive(v)
+
+def solution(p):
+    answer = recursive(p)
+    return ''.join(answer)
+
