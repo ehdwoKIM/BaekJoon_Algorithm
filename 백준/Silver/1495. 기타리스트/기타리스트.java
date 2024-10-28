@@ -1,55 +1,58 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.StringTokenizer;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        String[] inputs = br.readLine().split(" ");
-        int N = Integer.parseInt(inputs[0]);
-        int S = Integer.parseInt(inputs[1]);
-        int M = Integer.parseInt(inputs[2]);
-
-        int[] diff = new int[N+1];
-        inputs = br.readLine().split(" ");
-        for (int i = 1; i <= N; i++) {
-            diff[i] = Integer.parseInt(inputs[i-1]);
-        }
-
-        int[] volume = new int[M + 1];
-        for(int i=0; i<=M; i++){ // initialize : 0은 S의 초기값이기 때문에 -1로 초기화 시킨 후 진행
-            volume[i] = -1;
-        }
-        volume[S] = 0;
-
-        ArrayList<Integer> list = new ArrayList<>();
-
-        for(int i=1; i<=N; i++){ // 연주 idx
-            list.clear();
-            for(int j=0; j<=M; j++) { // 볼륨 idx
-                if(volume[j] == i-1) { // 이전 연주(i-1)가 j 볼륨으로 연주가 가능했으면
-                    if (0 <= j - diff[i] && j - diff[i] <= M) { // 0~M 범위에 속한다면
-                        list.add(j - diff[i]);
-                    }
-                    if (0 <= j + diff[i] && j + diff[i] <= M) {
-                        list.add(j + diff[i]);
-                    }
-                }
-            }
-            for (int v : list) {
-                volume[v] = i;
-            }
-        }
-
-        for(int i=M; i>=0; i--){
-            if(volume[i] == N){
-                System.out.println(i);
-                return;
-            }
-        }
-        System.out.println(-1);
-    }
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine(), " ");
+		int n = 0, s = 0, m = 0;
+		n = Integer.valueOf(st.nextToken());
+		s = Integer.valueOf(st.nextToken());
+		m = Integer.valueOf(st.nextToken());
+		
+		int[] v = new int[n+1];
+		st = new StringTokenizer(br.readLine(), " ");
+		for(int i=1; i<=n; i++) {
+			v[i] = Integer.valueOf(st.nextToken());
+		}
+		int[] dp = new int[m+1];
+		for(int i=0; i<=m; i++) dp[i] = -1;
+		
+		solution(n, s, m, v, dp);
+		
+		for(int i=m; i>=0; i--) {
+			if(dp[i] == n) {
+				System.out.println(i);
+				return;
+			}
+		}
+		System.out.println(-1);
+	}
+	
+	public static void solution(int n, int s, int m, int[] v, int[] dp) {
+		dp[s] = 0;
+		
+		
+		for(int v_idx=1; v_idx<=n; v_idx++) {
+			Queue<Integer> q = new LinkedList<>();
+			for(int dp_idx=0; dp_idx<=m; dp_idx++) {
+				if(v_idx-1 == dp[dp_idx]) {
+					int positive = dp_idx + v[v_idx];
+					int negative = dp_idx - v[v_idx];
+					
+					if(positive <= m) q.add(positive);
+					if(negative >= 0) q.add(negative);
+				}
+			}
+			while(!q.isEmpty()) {
+				int idx = q.poll();
+				dp[idx] = v_idx;
+			}
+		}
+	}
 }
