@@ -2,36 +2,46 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
+    static class In {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
+        int nextInt() throws IOException {
+            while (st == null || !st.hasMoreTokens()) st = new StringTokenizer(br.readLine());
+            return Integer.parseInt(st.nextToken());
+        }
+    }
+
     public static void main(String[] args) throws Exception {
-        Scanner sc = new Scanner(System.in);
-        int n = sc.nextInt(), m = sc.nextInt(), K = sc.nextInt();
+        In in = new In();
+        int n = in.nextInt(), m = in.nextInt(), K = in.nextInt();
 
         int[] candy = new int[n+1];
-        for (int i = 1; i <= n; i++) candy[i] = sc.nextInt();
+        for (int i = 1; i <= n; i++) candy[i] = in.nextInt();
 
         List<List<Integer>> g = new ArrayList<>(n+1);
         for (int i = 0; i <= n; i++) g.add(new ArrayList<>());
         for (int i = 0; i < m; i++) {
-            int a = sc.nextInt(), b = sc.nextInt();
+            int a = in.nextInt(), b = in.nextInt();
             g.get(a).add(b); g.get(b).add(a);
         }
 
         boolean[] seen = new boolean[n+1];
-        List<int[]> groups = new ArrayList<>(); // {size, sumCandy}
+        List<int[]> groups = new ArrayList<>();
         for (int i = 1; i <= n; i++) {
             if (seen[i]) continue;
             int cnt = 0, sum = 0;
-            ArrayDeque<Integer> q = new ArrayDeque<>();
-            q.add(i); seen[i] = true;
-            while (!q.isEmpty()) {
-                int cur = q.poll();
+            ArrayDeque<Integer> dq = new ArrayDeque<>();
+            dq.add(i); seen[i] = true;
+            while (!dq.isEmpty()) {
+                int cur = dq.poll();
                 cnt++; sum += candy[cur];
-                for (int nx : g.get(cur)) if (!seen[nx]) { seen[nx] = true; q.add(nx); }
+                for (int nx : g.get(cur)) if (!seen[nx]) { seen[nx] = true; dq.add(nx); }
             }
             groups.add(new int[]{cnt, sum});
         }
 
         int G = groups.size();
+        //2차원 DP
         int[][] dp = new int[G+1][K];
         for (int i = 1; i <= G; i++) {
             int sz = groups.get(i-1)[0];
